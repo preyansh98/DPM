@@ -8,10 +8,13 @@ public class PController implements UltrasonicController {
   private static final int MOTOR_SPEED = 200;
   private static final int FILTER_OUT = 20;
 
+  private static final int THRESHOLD = 2; //2 cm 
+  private static final int WALL_DIST = 20; //20 cm from wall
+
   private final int bandCenter;
   private final int bandWidth;
-  private int distance;
-  private int filterControl;
+  private int distance; //initial distance 
+  private int filterControl; 
 
   public PController(int bandCenter, int bandwidth) {
     this.bandCenter = bandCenter;
