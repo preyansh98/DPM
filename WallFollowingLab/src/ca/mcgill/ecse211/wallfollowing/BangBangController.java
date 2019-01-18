@@ -40,18 +40,21 @@ public class BangBangController implements UltrasonicController {
       //decrease rotation of outside wheel. right motor B 
       WallFollowingLab.leftMotor.setSpeed(motorHigh); 
       WallFollowingLab.rightMotor.setSpeed(motorHigh - motorLow); 
-      leftMotor.forward(); 
-      rightMotor.forward(); 
+      WallFollowingLab.leftMotor.forward();
+      WallFollowingLab.leftMotor.forward(); 
 
     }
     else{ //too far from the wall
       WallFollowingLab.leftMotor.setSpeed(motorHigh); 
       WallFollowingLab.rightMotor.setSpeed(motorHigh + motorLow); 
-      leftMotor.forward(); 
-      rightMotor.forward(); 
+      WallFollowingLab.leftMotor.forward();
+      WallFollowingLab.leftMotor.forward(); 
     }
+    try{
     Thread.sleep(50); 
     }
+  catch(Exception e){
+  e.printStackTrace(); }}
 
   @Override
   public int readUSDistance() {
