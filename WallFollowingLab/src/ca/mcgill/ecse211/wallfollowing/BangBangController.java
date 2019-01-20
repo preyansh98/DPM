@@ -10,7 +10,7 @@ private final int bandCenter; //offset from the wall
   private final int bandwidth; //width of the deadband i.e. error margin
   private final int motorLow; //speed of lower -- deltaspeed
   private final int motorHigh; //speed of high -- fwdspeed
-  private int distance;
+  private int distance; 
   
   
   public BangBangController(int bandCenter, int bandwidth, int motorLow, int motorHigh) {
@@ -30,11 +30,11 @@ private final int bandCenter; //offset from the wall
   public void processUSData(int distance) {
 	    int error = bandCenter - distance; //expected distance from wall (20) minus the current distance from the wall. 
 
-	  if (distance >= 255 && filterControl  < FILTER_OUT) {
+	  if (distance >= 200 && filterControl  < FILTER_OUT) {
         // bad value, do not set the distance var, however do increment the
         // filter value
         filterControl++;
-      } else if (distance >= 255) {
+      } else if (distance >= 200) {
         // We have repeated large values, so there must actually be nothing
         // there: leave the distance alone
         this.distance = distance;
@@ -52,51 +52,59 @@ private final int bandCenter; //offset from the wall
 	  //3. For sharp turn right ****
 	  //normal. 
   
-    //when positive, too close
-    if(Math.abs(error) <= bandwidth){ //on the correct path
-    	//what does this code do?
-        WallFollowingLab.leftMotor.setSpeed(motorHigh); 
-        WallFollowingLab.rightMotor.setSpeed(motorHigh);
-        WallFollowingLab.leftMotor.forward();
-        WallFollowingLab.rightMotor.forward(); 
-    }
-    else if(error > 0){
-      //too close to the wall 	
-      //decrease rotation of outside wheel. right motor B 
-    	if(error > 15) {
-    		//way too close to the wall. back away
-    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
-    		WallFollowingLab.rightMotor.stop();
-    		WallFollowingLab.leftMotor.forward();
-    	}
-    	else if(error > 10 && error < 15) {
-    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
-    		WallFollowingLab.rightMotor.setSpeed(motorLow - 50); 
-    		WallFollowingLab.leftMotor.forward();
-    		WallFollowingLab.rightMotor.forward();
-    	}
-    	else {//normal distance from 10 to 20
-      WallFollowingLab.leftMotor.setSpeed(motorHigh); 
-      WallFollowingLab.rightMotor.setSpeed(motorHigh - motorLow); 
-      WallFollowingLab.leftMotor.forward();
-      WallFollowingLab.rightMotor.forward(); 
-    	}
-      }
-    else if(error < 0){ //too far from the wall
-    	//TODO: find a way to not make a huge turn. 
-        WallFollowingLab.leftMotor.setSpeed(motorLow); 
-      WallFollowingLab.rightMotor.setSpeed(motorHigh); 
-      WallFollowingLab.leftMotor.forward();
-      WallFollowingLab.rightMotor.forward(); 
-    
-    }
-    try{
-    Thread.sleep(50); 
-    }
-  catch(Exception e){
-  e.printStackTrace(); }
-}
-
+	  
+	    //when positive, too close
+	    if(Math.abs(error) <= bandwidth){ //on the correct path
+	    	//what does this code do?
+	        WallFollowingLab.leftMotor.setSpeed(motorHigh); 
+	        WallFollowingLab.rightMotor.setSpeed(motorHigh);
+	        WallFollowingLab.leftMotor.forward();
+	        WallFollowingLab.rightMotor.forward(); 
+	    }
+	    else if(error > 0){
+	      //too close to the wall 	
+	      //decrease rotation of outside wheel. right motor B 
+	    	if(error > 20) {
+	    		//way too close to the wall. back away
+	    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
+	    		WallFollowingLab.rightMotor.stop();
+	    		WallFollowingLab.leftMotor.forward();
+	    	}
+	    	else if(error > 15 && error < 20) {
+	    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
+	    		WallFollowingLab.rightMotor.setSpeed(motorLow - 50); 
+	    		WallFollowingLab.leftMotor.forward();
+	    		WallFollowingLab.rightMotor.forward();
+	    	}
+	    	else {//normal distance from 10 to 20
+	      WallFollowingLab.leftMotor.setSpeed(motorHigh); 
+	      WallFollowingLab.rightMotor.setSpeed(motorLow); 
+	      WallFollowingLab.leftMotor.forward();
+	      WallFollowingLab.rightMotor.forward(); 
+	    	}
+	      }
+	    else if(error < 0){ //too far from the wall
+	    	//TODO: find a way to not make a huge turn. 
+	    	//its turning into the wall
+	    	if(error < -20 && error > -30) {
+	    		WallFollowingLab.leftMotor.setSpeed(motorLow);
+	    		WallFollowingLab.rightMotor.setSpeed(motorLow + 50);
+	    		WallFollowingLab.leftMotor.forward();
+	    		WallFollowingLab.rightMotor.forward();
+	    	}
+	    	else {
+	      WallFollowingLab.leftMotor.setSpeed(motorLow); 
+	      WallFollowingLab.rightMotor.setSpeed(motorHigh); 
+	      WallFollowingLab.leftMotor.forward();
+	      WallFollowingLab.rightMotor.forward(); 
+	    	}
+	    }
+	    try{
+	        Thread.sleep(50); 
+	        }
+	      catch(Exception e){
+	      e.printStackTrace(); }
+	    }
 
 
   @Override
