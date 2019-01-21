@@ -28,21 +28,21 @@ private final int bandCenter; //offset from the wall
 
   @Override
   public void processUSData(int distance) {
-	    int error = bandCenter - distance; //expected distance from wall (20) minus the current distance from the wall. 
+	    int error = bandCenter - distance; //expected distance from wall (30) minus the current distance from the wall. 
 
-	  if (distance >= 200 && filterControl  < FILTER_OUT) {
+	  if (distance >= 150 && filterControl  < FILTER_OUT) {
         // bad value, do not set the distance var, however do increment the
         // filter value
         filterControl++;
-      } else if (distance >= 200) {
+      } else if (distance >= 150) {
         // We have repeated large values, so there must actually be nothing
         // there: leave the distance alone
-        this.distance = distance;
+        this.distance = (int) ((distance)/(Math.sqrt(2)));
       } else {
         // distance went below 255: reset filter and leave
         // distance alone.
         filterControl = 0;
-        this.distance = distance;
+        this.distance = (int) ((distance)/(Math.sqrt(2)));
       }
 
     // TODO: process a movement based on the us distance passed in (BANG-BANG style)
@@ -66,13 +66,13 @@ private final int bandCenter; //offset from the wall
 	      //decrease rotation of outside wheel. right motor B 
 	    	if(error > 20) {
 	    		//way too close to the wall. back away
-	    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
+	    		WallFollowingLab.leftMotor.setSpeed(motorHigh + motorHigh + 50);
 	    		WallFollowingLab.rightMotor.stop();
 	    		WallFollowingLab.leftMotor.forward();
 	    	}
 	    	else if(error > 15 && error < 20) {
-	    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
-	    		WallFollowingLab.rightMotor.setSpeed(motorLow - 50); 
+	    		WallFollowingLab.leftMotor.setSpeed(motorHigh + motorLow);
+	    		WallFollowingLab.rightMotor.setSpeed(motorLow); 
 	    		WallFollowingLab.leftMotor.forward();
 	    		WallFollowingLab.rightMotor.forward();
 	    	}
@@ -86,12 +86,18 @@ private final int bandCenter; //offset from the wall
 	    else if(error < 0){ //too far from the wall
 	    	//TODO: find a way to not make a huge turn. 
 	    	//its turning into the wall
-	    	if(error < -20 && error > -30) {
-	    		WallFollowingLab.leftMotor.setSpeed(motorLow);
-	    		WallFollowingLab.rightMotor.setSpeed(motorLow + 50);
+	    	if(error < -5 && error > -20) {
+	    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
+	    		WallFollowingLab.rightMotor.setSpeed(motorHigh + 50);
 	    		WallFollowingLab.leftMotor.forward();
 	    		WallFollowingLab.rightMotor.forward();
 	    	}
+//	    else if(error < -20 && error > -30) {
+//	    		WallFollowingLab.leftMotor.setSpeed(motorLow);
+//	    		WallFollowingLab.rightMotor.setSpeed(motorLow + 50);
+//	    		WallFollowingLab.leftMotor.forward();
+//	    		WallFollowingLab.rightMotor.forward();
+//	    	}
 	    	else {
 	      WallFollowingLab.leftMotor.setSpeed(motorLow); 
 	      WallFollowingLab.rightMotor.setSpeed(motorHigh); 
