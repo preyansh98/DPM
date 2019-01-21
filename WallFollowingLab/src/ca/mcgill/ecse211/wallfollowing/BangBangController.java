@@ -100,7 +100,7 @@ private final int bandCenter; //offset from the wall
 //	    	}
 	    	else {
 	      WallFollowingLab.leftMotor.setSpeed(motorLow); 
-	      WallFollowingLab.rightMotor.setSpeed(motorHigh); 
+	      WallFollowingLab.rightMotor.setSpeed(motorLow + 50); 
 	      WallFollowingLab.leftMotor.forward();
 	      WallFollowingLab.rightMotor.forward(); 
 	    	}
