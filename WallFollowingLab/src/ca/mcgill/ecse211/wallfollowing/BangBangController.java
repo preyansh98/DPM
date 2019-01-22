@@ -4,7 +4,7 @@ import lejos.hardware.motor.*;
 
 public class BangBangController implements UltrasonicController {
 
-  private static final int FILTER_OUT = 20;
+  private static final int FILTER_OUT = 17;
   private int filterControl; 
 private final int bandCenter; //offset from the wall
   private final int bandwidth; //width of the deadband i.e. error margin
@@ -37,12 +37,12 @@ private final int bandCenter; //offset from the wall
       } else if (distance >= 150) {
         // We have repeated large values, so there must actually be nothing
         // there: leave the distance alone
-        this.distance = (int) ((distance)/(Math.sqrt(2)));
+        this.distance = (int) ((distance)/Math.sqrt(2));
       } else {
         // distance went below 255: reset filter and leave
         // distance alone.
         filterControl = 0;
-        this.distance = (int) ((distance)/(Math.sqrt(2)));
+        this.distance = (int) ((distance)/Math.sqrt(2));
       }
 
     // TODO: process a movement based on the us distance passed in (BANG-BANG style)
@@ -64,20 +64,20 @@ private final int bandCenter; //offset from the wall
 	    else if(error > 0){
 	      //too close to the wall 	
 	      //decrease rotation of outside wheel. right motor B 
-	    	if(error > 20) {
+	    	if(error > 18) {
 	    		//way too close to the wall. back away
-	    		WallFollowingLab.leftMotor.setSpeed(motorHigh + motorHigh + 50);
+	    		WallFollowingLab.leftMotor.setSpeed(2*motorHigh + 50);
 	    		WallFollowingLab.rightMotor.stop();
 	    		WallFollowingLab.leftMotor.forward();
 	    	}
-	    	else if(error > 15 && error < 20) {
-	    		WallFollowingLab.leftMotor.setSpeed(motorHigh + motorLow);
+	    	else if(error > 10 && error < 18) {
+	    		WallFollowingLab.leftMotor.setSpeed(motorHigh + motorLow + motorLow);
 	    		WallFollowingLab.rightMotor.setSpeed(motorLow); 
 	    		WallFollowingLab.leftMotor.forward();
 	    		WallFollowingLab.rightMotor.forward();
 	    	}
 	    	else {//normal distance from 10 to 20
-	      WallFollowingLab.leftMotor.setSpeed(motorHigh); 
+	      WallFollowingLab.leftMotor.setSpeed(motorHigh + 35); 
 	      WallFollowingLab.rightMotor.setSpeed(motorLow); 
 	      WallFollowingLab.leftMotor.forward();
 	      WallFollowingLab.rightMotor.forward(); 
@@ -92,12 +92,12 @@ private final int bandCenter; //offset from the wall
 	    		WallFollowingLab.leftMotor.forward();
 	    		WallFollowingLab.rightMotor.forward();
 	    	}
-//	    else if(error < -20 && error > -30) {
-//	    		WallFollowingLab.leftMotor.setSpeed(motorLow);
-//	    		WallFollowingLab.rightMotor.setSpeed(motorLow + 50);
-//	    		WallFollowingLab.leftMotor.forward();
-//	    		WallFollowingLab.rightMotor.forward();
-//	    	}
+	    	else if(error > -20 && error < -40) {
+	    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
+	    		WallFollowingLab.rightMotor.setSpeed(motorHigh);
+	    		WallFollowingLab.leftMotor.forward();
+	    		WallFollowingLab.rightMotor.forward();
+	    	}
 	    	else {
 	      WallFollowingLab.leftMotor.setSpeed(motorLow); 
 	      WallFollowingLab.rightMotor.setSpeed(motorLow + 50); 

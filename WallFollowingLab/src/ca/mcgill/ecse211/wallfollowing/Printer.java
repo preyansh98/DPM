@@ -31,7 +31,6 @@ public class Printer extends Thread {
       else if (this.option == Button.ID_RIGHT)
         t.drawString("P type", 0, 1);
       t.drawString("US Distance: " + cont.readUSDistance(), 0, 2); // print last US reading
-     t.drawString("Powered by P & M " + cont.readUSDistance(), 0, 3);
 
       try {
         Thread.sleep(200); // sleep for 200 mS
