@@ -14,9 +14,9 @@ public class Lab2 {
       new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
   private static final EV3LargeRegulatedMotor rightMotor =
       new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-  private static final TextLCD lcd = LocalEV3.get().getTextLCD();
-  public static final double WHEEL_RAD = 2.2;
-  public static final double TRACK = 17.0;
+  private static final TextLCD lcd = LocalEV3.get().getTextLCD(); 
+  public static final double WHEEL_RAD = 0.8; //2.2 originally diagonal
+  public static final double TRACK = 9.3; //distance between the two wheels, originally 17 
 
   public static void main(String[] args) throws OdometerExceptions {
 
@@ -85,7 +85,7 @@ public class Lab2 {
       // spawn a new Thread to avoid SquareDriver.drive() from blocking
       (new Thread() {
         public void run() {
-          SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK);
+          SquareDriver.drive(leftMotor, rightMotor, WHEEL_RAD, WHEEL_RAD, TRACK); //left and right motor, then left radius, right radius and track
         }
       }).start();
     }

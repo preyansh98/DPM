@@ -102,13 +102,32 @@ public class Odometer extends OdometerData implements Runnable {
     while (true) {
       updateStart = System.currentTimeMillis();
 
-      leftMotorTachoCount = leftMotor.getTachoCount();
-      rightMotorTachoCount = rightMotor.getTachoCount();
+      int newLeftTacho = leftMotor.getTachoCount(); 
+      int newRightTacho = rightMotor.getTachoCount(); 
 
-      // TODO Calculate new robot position based on tachometer counts
+      
+      // TODO Calculate new robot position based on tachometer counts  
+      //new x, new y, and new theta compared to last tacho count. 
+          
+     double leftDist = Math.PI * WHEEL_RAD * (newLeftTacho - leftMotorTachoCount)/180;
+     double rightDist = Math.PI * WHEEL_RAD * (newRightTacho - rightMotorTachoCount)/180; 
+     
+     this.leftMotorTachoCount = newLeftTacho;
+     this.rightMotorTachoCount = newRightTacho;
+     
+     double deltaDist = 0.5*(leftDist + rightDist); 
+     double deltaTheta = (leftDist - rightDist)/(TRACK); //is track wheel base?
+     
+     double ThetaVal = 0; //do we want to initialize or store this var?
+     
+     ThetaVal  += deltaTheta; 
+     
+     double changeInX = deltaDist * Math.sin(Math.toDegrees(ThetaVal)); 
+     double changeInY = deltaDist * Math.cos(Math.toDegrees(ThetaVal)); 
+     
       
       // TODO Update odometer values with new calculated values
-      odo.update(0.5, 1.8, 20.1);
+      odo.update(changeInX, changeInY, deltaTheta); //adds the values to the current value
 
       // this ensures that the odometer only runs once every period
       updateEnd = System.currentTimeMillis();
