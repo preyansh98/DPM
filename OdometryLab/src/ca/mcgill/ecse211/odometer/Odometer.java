@@ -122,12 +122,12 @@ public class Odometer extends OdometerData implements Runnable {
      
      ThetaVal  += deltaTheta; 
      
-     double changeInX = deltaDist * Math.sin(Math.toDegrees(ThetaVal)); 
-     double changeInY = deltaDist * Math.cos(Math.toDegrees(ThetaVal)); 
+     double changeInX = deltaDist * Math.sin(ThetaVal); //sin and cos are for negative values when turns back
+     double changeInY = deltaDist * Math.cos(ThetaVal); 
      
       
       // TODO Update odometer values with new calculated values
-      odo.update(changeInX, changeInY, deltaTheta); //adds the values to the current value
+      odo.update(changeInX, changeInY, Math.toDegrees(deltaTheta)); //adds the values to the current value
 
       // this ensures that the odometer only runs once every period
       updateEnd = System.currentTimeMillis();
