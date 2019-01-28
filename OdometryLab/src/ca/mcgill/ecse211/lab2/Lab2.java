@@ -16,8 +16,8 @@ public class Lab2 {
   private static final EV3LargeRegulatedMotor rightMotor =
       new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
   private static final TextLCD lcd = LocalEV3.get().getTextLCD(); 
-  public static final double WHEEL_RAD = 1.5; //2.2 originally diagonal
-  public static final double TRACK = 7; //distance between the two wheels, originally 17 
+  public static final double WHEEL_RAD = 2.2; //2.2 originally diagonal
+  public static final double TRACK = 10.7; //distance between the two wheels, originally 17 
 
    static EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S3); 
 

@@ -17,7 +17,7 @@ public class OdometryCorrection implements Runnable {
 
 	private static final double LineIntensity = 85; // have to find this by trial and error?
 	private static final double SquareTile = 30.48;
-	private static final double Brick_Offset = 0;
+	//private static final double Brick_Offset = 0;
 	// Initializing the color sensor
 	SampleProvider samples;
 	private float[] sampleList;
@@ -56,7 +56,7 @@ public class OdometryCorrection implements Runnable {
 
 			// TODO Trigger correction (When do I have information to correct?)
 
-			odometer.getXYT();
+			
 
 			// if(colSensor.isFloodlightOn() == false) {
 			// colSensor.setFloodlight(Color.RED); //floodlight in reflect mode. Color.RED.
