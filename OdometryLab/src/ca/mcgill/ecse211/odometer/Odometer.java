@@ -26,7 +26,7 @@ public class Odometer extends OdometerData implements Runnable {
   private final double TRACK;
   private final double WHEEL_RAD;
 
-  private double[] position;
+  
   double ThetaVal = 0; //do we want to initialize or store this var?
   
 
@@ -103,19 +103,21 @@ public class Odometer extends OdometerData implements Runnable {
 
     while (true) {
       updateStart = System.currentTimeMillis();
-
+      //initialize
       int newLeftTacho = leftMotor.getTachoCount(); 
       int newRightTacho = rightMotor.getTachoCount(); 
 
       
       // TODO Calculate new robot position based on tachometer counts  
       //new x, new y, and new theta compared to last tacho count. 
-          
+      // the following doubles create the distance covered by both wheels for every rotation   
      double leftDist = Math.PI * WHEEL_RAD * (newLeftTacho - leftMotorTachoCount)/180;
      double rightDist = Math.PI * WHEEL_RAD * (newRightTacho - rightMotorTachoCount)/180; 
      
+     // updates old tachocounts to be new ones
      this.leftMotorTachoCount = newLeftTacho;
      this.rightMotorTachoCount = newRightTacho;
+     
      
      double deltaDist = 0.5*(leftDist + rightDist); 
      double deltaTheta = (leftDist - rightDist)/(TRACK); //is track wheel base?

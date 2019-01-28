@@ -17,7 +17,7 @@ public class OdometryCorrection implements Runnable {
 
 	private static final double LineIntensity = 85; // have to find this by trial and error?
 	private static final double SquareTile = 30.48;
-	private static final double SensorOffset = 4.3;
+	
 	// Initializing the color sensor
 	SampleProvider samples;
 	private float[] sampleList;
@@ -58,12 +58,6 @@ public class OdometryCorrection implements Runnable {
 
 			
 
-			// if(colSensor.isFloodlightOn() == false) {
-			// colSensor.setFloodlight(Color.RED); //floodlight in reflect mode. Color.RED.
-			// colSensor.setFloodlight(true); //floodlight is now on
-			// }
-			//
-
 			// Then fetch the sample from the red mode
 			colSensor.fetchSample(sampleList, 0); // new array so offset is 0
 			// since in thread, continously updates sampleList at [0]
@@ -93,14 +87,7 @@ public class OdometryCorrection implements Runnable {
 					LCD.drawString("ValX1: " + counterXR, 1, 6);
 					counterYF++;
 					
-//					else {
-//						//this runs at the very end when its back and turns. 
-//						
-//						//we add the offset back here
-//						
-//						//odometer.setXYT(Brick_Offset, 0, 0);
-//					}
-					
+
 				}
 				 else if (theta > 45 && theta < 135) { //but will this code be running during the turn? we need a delay
 					// should be at 90
@@ -139,42 +126,7 @@ public class OdometryCorrection implements Runnable {
 				}
 			}
 			//there's an offset at each turn, approximately equal to an entire square. 
-			
-		/*Another way of doing this is hardcoded to a 3x3 grid: 
-			//
-			// //what turn is the robot doing?
-			// switch (NoOfLines){
-			//
-			// case 1:
-			// odometer.setXYT(0,0,0); //we have to measure offset and record it
-			// case 2:
-			// odometer.setY(SquareTile);
-			// case 3:
-			// odometer.setY(2*SquareTile);
-			// case 4:
-			// odometer.setTheta(90); //it turns right
-			// odometer.setX(0); //there is an offset again in actual measurement
-			// case 5:
-			// odometer.setX(SquareTile);
-			// case 6:
-			// odometer.setX(2*SquareTile);
-			// case 7:
-			// odometer.setTheta(180);
-			// odometer.setY(2*SquareTile);
-			// case 8:
-			// odometer.setY(SquareTile);
-			// case 9:
-			// odometer.setY(0);
-			// case 10:
-			// odometer.setTheta(270);
-			// odometer.setX(2*SquareTile);
-			// case 11:
-			// odometer.setX(SquareTile);
-			// case 12:
-			// odometer.setXYT(Brick_Offset, 0 ,0);
-			// //add the offset back.
-			// }
-			//*/
+		
 
 			// this ensure the odometry correction occurs only once every period
 			correctionEnd = System.currentTimeMillis();
