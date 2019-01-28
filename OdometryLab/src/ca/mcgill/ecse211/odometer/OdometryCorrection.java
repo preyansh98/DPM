@@ -17,7 +17,7 @@ public class OdometryCorrection implements Runnable {
 
 	private static final double LineIntensity = 85; // have to find this by trial and error?
 	private static final double SquareTile = 30.48;
-	//private static final double Brick_Offset = 0;
+	private static final double SensorOffset = 4.3;
 	// Initializing the color sensor
 	SampleProvider samples;
 	private float[] sampleList;
@@ -86,8 +86,9 @@ public class OdometryCorrection implements Runnable {
 			    	//every time it detects a black line it knows its passed another square tile
 					
 					//we need to use a boolean so that this doesn't run at the end. 
-				
-					odometer.setXYT(0, SquareTile*counterYF, 0); 
+					odometer.setTheta(0);
+					odometer.setY(SquareTile*counterYF);
+					//odometer.setXYT(0, SquareTile*counterYF, 0); 
 					LCD.drawString("ValY1: " + counterYF, 1, 5);
 					LCD.drawString("ValX1: " + counterXR, 1, 6);
 					counterYF++;
@@ -103,7 +104,9 @@ public class OdometryCorrection implements Runnable {
 				}
 				 else if (theta > 45 && theta < 135) { //but will this code be running during the turn? we need a delay
 					// should be at 90
-					 odometer.setXYT(SquareTile*counterXR, SquareTile*counterYF, 90); //the y should be constant from the previous case
+					 odometer.setTheta(90);
+					 odometer.setX(SquareTile*counterXR);
+					 //odometer.setXYT(SquareTile*counterXR, SquareTile*counterYF, 90); //the y should be constant from the previous case
 					 //so we want to get y and store it here
 					 //based on counter 1 we know how many lines it went through in y 
 						LCD.drawString("ValY2: " + counterYF, 1, 5);
@@ -115,7 +118,9 @@ public class OdometryCorrection implements Runnable {
 					
 					counterYF--;
 					//now the X should be constant based on counter 2 we know how many x lines it passed
-					odometer.setXYT(SquareTile*counterXR, SquareTile*counterYF, 180); //y should be changing 
+					odometer.setTheta(180);
+					odometer.setY(SquareTile*counterYF);
+					//odometer.setXYT(SquareTile*counterXR, SquareTile*counterYF, 180); //y should be changing 
 					//the lines are reducing
 					LCD.drawString("ValY3: " + counterYF, 1, 5);
 					LCD.drawString("ValX3: " + counterXR, 1, 6);
@@ -125,7 +130,9 @@ public class OdometryCorrection implements Runnable {
 					//now its coming back to original position
 					counterXR--;
 					// x should be reducing and y should be 0 
-					odometer.setXYT(SquareTile*counterXR, 0, 270);
+					odometer.setTheta(270);
+					odometer.setX(SquareTile*counterXR);
+					//odometer.setXYT(SquareTile*counterXR, 0, 270);
 					LCD.drawString("ValY4: " + counterYF, 1, 5);
 					LCD.drawString("ValX4: " + counterXR, 1, 6);
 					
