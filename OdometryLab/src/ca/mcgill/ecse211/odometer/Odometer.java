@@ -27,6 +27,8 @@ public class Odometer extends OdometerData implements Runnable {
   private final double WHEEL_RAD;
 
   private double[] position;
+  double ThetaVal = 0; //do we want to initialize or store this var?
+  
 
 
   private static final long ODOMETER_PERIOD = 25; // odometer update period in ms
@@ -118,8 +120,7 @@ public class Odometer extends OdometerData implements Runnable {
      double deltaDist = 0.5*(leftDist + rightDist); 
      double deltaTheta = (leftDist - rightDist)/(TRACK); //is track wheel base?
      
-     double ThetaVal = 0; //do we want to initialize or store this var?
-     
+
      ThetaVal  += deltaTheta; 
      
      double changeInX = deltaDist * Math.sin(ThetaVal); //sin and cos are for negative values when turns back
