@@ -26,83 +26,112 @@ public class Lab3 {
 	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 	  private static final TextLCD lcd = LocalEV3.get().getTextLCD(); 
 	  public static final double WHEEL_RAD = 2.19; //2.19 set as the radius of the wheel
-	  public static final double TRACK = 11; //The track value refers to distance between the two wheels.
+	  public static final double TRACK = 10.7; //The track value refers to distance between the two wheels.
 
-	   static EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S3); //Color Sensor initialized 
-	
+	  private static double[][] waypoints; 
+	  private static double SQUARE_TILE = 30.48; 
+	  
+	   
 	public static void main(String[] args) throws OdometerExceptions{
 		   int buttonChoice;
 		    // Odometer related objects
-		    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD); // TODO Complete implementation
-		    OdometryCorrection odometryCorrection = new OdometryCorrection(Odometer.getOdometer(), colSensor); // TODO Complete
-		                                                                      // implementation
+		    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD); 
 		    Display odometryDisplay = new Display(lcd); // No need to change
-
-
+			Navigation navigator = new Navigation(leftMotor, rightMotor, TRACK, WHEEL_RAD); 
+		    ObstacleAvoider obstacleAvoider = new ObstacleAvoider(leftMotor, rightMotor, TRACK, WHEEL_RAD); 
+		    
 		    do {
-		      // clear the display
+		      // clear the displays
 		      lcd.clear();
 
-		      // ask the user whether the motors should drive in a square or float
-		      lcd.drawString("< Left | Right >", 0, 0);
-		      lcd.drawString("       |        ", 0, 1);
-		      lcd.drawString(" Float | Drive  ", 0, 2);
-		      lcd.drawString("motors | in a   ", 0, 3);
-		      lcd.drawString("       | square ", 0, 4);
+	          lcd.drawString("< Left  | Right >", 0, 0);
+	          lcd.drawString("  No    | with   ", 0, 1);
+	          lcd.drawString("obstacle|obstacle", 0, 2);
+	          lcd.drawString("        |   ", 0, 3);
+	          lcd.drawString("        |        ", 0, 4);
 
-		      buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-		    } while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
-
-		    if (buttonChoice == Button.ID_LEFT) {
-		      // Float the motors
-		      leftMotor.forward();
-		      leftMotor.flt();
-		      rightMotor.forward();
-		      rightMotor.flt();
-
-		      // Display changes in position as wheels are (manually) moved
-		      
-		      Thread odoThread = new Thread(odometer);
-		      odoThread.start();
-		      Thread odoDisplayThread = new Thread(odometryDisplay);
-		      odoDisplayThread.start();
-
-		    } else {
-		      // clear the display
-		      lcd.clear();
-
-		      // ask the user whether odometery correction should be run or not
-		      lcd.drawString("< Left | Right >", 0, 0);
-		      lcd.drawString("  No   | with   ", 0, 1);
-		      lcd.drawString(" corr- | corr-  ", 0, 2);
-		      lcd.drawString(" ection| ection ", 0, 3);
-		      lcd.drawString("       |        ", 0, 4);
-
-		      buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-
-		      // Start odometer and display threads
-		      Thread odoThread = new Thread(odometer);
-		      odoThread.start();
-		      Thread odoDisplayThread = new Thread(odometryDisplay);
-		      odoDisplayThread.start();
-
-		      // Start correction if right button was pressed
-		      if (buttonChoice == Button.ID_RIGHT) {
-		        Thread odoCorrectionThread = new Thread(odometryCorrection);
-		        odoCorrectionThread.start();
-		      }
-
-		      // spawn a new Thread to avoid SquareDriver.drive() from blocking
-		      (new Thread() {
-		        public void run() {
-		          
-		        }
-		      }).start();
+	        buttonChoice = Button.waitForAnyPress();
+	      }
+    
+	    while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);		      
+		    
+		    initThreads(odometer, odometryDisplay); 
+		    
+		    if(buttonChoice == Button.ID_LEFT) {		  
+		    	navigator.run();
+		    }
+		    else if(buttonChoice == Button.ID_RIGHT) {
+		    	obstacleAvoider.run();
 		    }
 
 		    while (Button.waitForAnyPress() != Button.ID_ESCAPE);
 		    System.exit(0);
 		  }
+
+	private static void initThreads(Odometer odometer, Display odometryDisplay) {
+	    Thread odoThread = new Thread(odometer);
+	      odoThread.start();
+	      Thread odoDisplayThread = new Thread(odometryDisplay);
+	      odoDisplayThread.start();
+	   
+	}
+	
+	private static  void selectMap(double[][] waypoints, double SQUARE_TILE) {
+		 // ask the user whether the motors should drive in a square or float
+			int buttonChoice; 
+			do {
+	      lcd.drawString(" ^ Map 1 ^ ", 0, 0);
+	      lcd.drawString("          |        ", 0, 1);
+	      lcd.drawString(" < Map 2 | Map 3 >  ", 0, 2);
+	      lcd.drawString("      ", 0, 3);
+	      lcd.drawString(" Map 4 v ", 0, 4);
+	      		    	
+	      
+	      buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
+
+	
+	    } while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT &&
+	    		buttonChoice != Button.ID_UP && buttonChoice != Button.ID_DOWN	);
+
+	      if(buttonChoice == Button.ID_UP) {
+	    	  //Run map 1 code 
+	    	  waypoints = new double[][] 	   
+	    	   {{0*SQUARE_TILE, 2*SQUARE_TILE},
+	  			{1*SQUARE_TILE, 1*SQUARE_TILE},
+				{2*SQUARE_TILE, 2*SQUARE_TILE},
+				{2*SQUARE_TILE, 1*SQUARE_TILE},
+				{1*SQUARE_TILE, 0*SQUARE_TILE}};
+	      }
+	      else if(buttonChoice == Button.ID_LEFT) {
+	    	  //Run map 2 code 
+	    	  waypoints = new double[][] 	   
+			    	   {{1*SQUARE_TILE, 1*SQUARE_TILE},
+			  			{0*SQUARE_TILE, 2*SQUARE_TILE},
+						{2*SQUARE_TILE, 2*SQUARE_TILE},
+						{2*SQUARE_TILE, 1*SQUARE_TILE},
+						{1*SQUARE_TILE, 0*SQUARE_TILE}};
+	      }
+	      else if(buttonChoice == Button.ID_RIGHT) {
+	    	  //Run map 3 code
+	    	  waypoints = new double[][] 	   
+			    	   {{1*SQUARE_TILE, 0*SQUARE_TILE},
+			  			{2*SQUARE_TILE, 1*SQUARE_TILE},
+						{2*SQUARE_TILE, 2*SQUARE_TILE},
+						{0*SQUARE_TILE, 2*SQUARE_TILE},
+						{1*SQUARE_TILE, 1*SQUARE_TILE}};
+	      }		    	  
+	      
+	      else if(buttonChoice == Button.ID_DOWN) {
+	    	//Run map 4 code
+	    	  waypoints = new double[][] 	   
+			    	   {{0*SQUARE_TILE, 1*SQUARE_TILE},
+			  			{1*SQUARE_TILE, 2*SQUARE_TILE},
+						{1*SQUARE_TILE, 0*SQUARE_TILE},
+						{2*SQUARE_TILE, 1*SQUARE_TILE},
+						{2*SQUARE_TILE, 2*SQUARE_TILE}};
+	      }	 
+
+	}
 
 	}
 
