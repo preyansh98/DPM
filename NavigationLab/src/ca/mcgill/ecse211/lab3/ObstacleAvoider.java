@@ -11,6 +11,14 @@ import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerData;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 
+
+/**
+ * This class has the same functionality as the Navigation class, but implements
+ * the Navigation class travelTo method differently. 
+ * 
+ * @author Preyansh & Maxime
+ *
+ */
 public class ObstacleAvoider extends Thread {
 
 	//Setting up motors
@@ -66,7 +74,7 @@ public class ObstacleAvoider extends Thread {
 			for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] {leftMotor, rightMotor}) {
 				motor.stop();
 				motor.setAcceleration(300); 
-				//we set the acceleration much lower so we can read more sammples
+				//The acceleration is significantly lowered to let the robot read more samples
 			}
 			
 			try {
@@ -74,13 +82,27 @@ public class ObstacleAvoider extends Thread {
 			} catch (InterruptedException e) {
 				
 			}
+			
+		/*An extra counter is created that indicates which waypoint 
+		   the robot has to travel to next. */
 			while(counter < waypoints.length) { 
 				travelTo(waypoints[counter][0], waypoints[counter][1]);
 				counter++;
 			}
 		}
 		
-		
+		/**
+		 * This method allows the robot to travel to each waypoints based on its x and y coordinates
+		 * It uses the current position of the robot from the odometer, and calculates how far it needs to move based on that
+		 * 
+		 * Based on in which quadrant it needs to move, the angle is calculated differently to ensure minimal angle. 
+		 * 
+		 * It differs from Navigation class method by adding the case where the ultrasonic sensor detects an obstacle nearby
+		 * In this case it runs a sequence to avoid the obstacle. 
+		 * 
+		 * @param x - the x co-ordinate of the waypoint to travel to
+		 * @param y - the y co-ordinate of thew waypoint to travel to
+		 */
 		void travelTo(double x, double y) {
 			
 		    double position[] = new double[3]; 
@@ -211,7 +233,11 @@ public class ObstacleAvoider extends Thread {
 			}
 		}
 
-		
+		/**
+		 * This method returns a boolean as true if either motor is moving. 
+		 * i.e. then the robot is Navigating
+		 * @return true if any of the two motors are moving
+		 */
 		boolean isNavigating() {
 			if((leftMotor.isMoving() || rightMotor.isMoving()))
 				return true;
