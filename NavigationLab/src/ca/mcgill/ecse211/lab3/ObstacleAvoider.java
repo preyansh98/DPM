@@ -1,9 +1,11 @@
 package ca.mcgill.ecse211.lab3;
 
 import lejos.hardware.sensor.*;
+import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
 import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerData;
@@ -16,7 +18,6 @@ public class ObstacleAvoider extends Thread {
 	private EV3LargeRegulatedMotor rightMotor;
 	
 	//Ultrasonic sensor initializers
-	private static final Port usPort = LocalEV3.get().getPort("S1");
 	private float[] usData;
 	private SampleProvider usSamples;
 	
@@ -52,7 +53,7 @@ public class ObstacleAvoider extends Thread {
 			this.WHEEL_RAD = WHEEL_RAD;
 			
 			//Setting up ultrasonic sensor in distance mode to collect samples 
-			SensorModes usSensor = new EV3UltrasonicSensor(usPort);
+			SensorModes usSensor = new EV3UltrasonicSensor(SensorPort.S1);
 			usSamples = usSensor.getMode("Distance"); 
 			this.usData = new float[usSamples.sampleSize()]; 
 			
@@ -78,7 +79,8 @@ public class ObstacleAvoider extends Thread {
 				counter++;
 			}
 		}
-
+		
+		
 		void travelTo(double x, double y) {
 			
 		    double position[] = new double[3]; 
@@ -125,7 +127,7 @@ public class ObstacleAvoider extends Thread {
 			leftMotor.setSpeed(250);
 			rightMotor.setSpeed(250);
 			leftMotor.rotate(convertDistance(WHEEL_RAD, dist), true);
-		    rightMotor.rotate(convertDistance(WHEEL_RAD, dist), false); 
+		    rightMotor.rotate(convertDistance(WHEEL_RAD, dist), true); 
 			//convertDistance borrowed from SquareDriver
 
 			while(isNavigating()) { 
@@ -135,10 +137,13 @@ public class ObstacleAvoider extends Thread {
 				
 				
 				if(distance<= 12) {
-								
+					//if the distance is below a certain threshold, i.e. obstacle is here
+					//run this code
+					
 					if(odometer.getXYT()[0]<2.4*30.48 && odometer.getXYT()[0] >1.3*30.48
 							&& odometer.getXYT()[1]<2.5*30.48 && odometer.getXYT()[1]>1.6*30.48 ){
 						
+						//it moves a fixed pattern to avoid the block
 						leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, 90), true);   
 						rightMotor.rotate(convertAngle(WHEEL_RAD, TRACK, 90), false);
 						leftMotor.rotate(convertDistance(WHEEL_RAD, 30), true);
@@ -159,11 +164,19 @@ public class ObstacleAvoider extends Thread {
 					leftMotor.rotate(convertDistance(WHEEL_RAD, 40), true);
 					rightMotor.rotate(convertDistance(WHEEL_RAD, 40), false);
 					}
+					//the counter is subtracted here so at the end of this sequence
+					//it would go back to the waypoint it initially was on path to
 					counter--;
 				}
+
+			
 			}
 		}
 
+		/**
+		 * This method makes the robot turn to a specific angle entered. 
+		 * @param theta
+		 */
 		void turnTo(double theta) {
 			//TODO: This method should cause the robot to turn to theta
 			
@@ -198,7 +211,7 @@ public class ObstacleAvoider extends Thread {
 			}
 		}
 
-
+		
 		boolean isNavigating() {
 			if((leftMotor.isMoving() || rightMotor.isMoving()))
 				return true;

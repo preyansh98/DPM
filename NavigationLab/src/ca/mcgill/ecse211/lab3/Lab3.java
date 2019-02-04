@@ -1,7 +1,5 @@
 package ca.mcgill.ecse211.lab3;
 
-
-
 import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
@@ -30,22 +28,33 @@ public class Lab3 {
 	  public static final double TRACK = 10.7; //The track value refers to distance between the two wheels.
 
 
-	  private static double[][] waypoints = new double[][]
-		    {{1*30.48, 1*30.48},
-			{0*30.48, 2*30.48},
-			{2*30.48, 2*30.48},
-			{2*30.48,1*30.48},
-			{1*30.48, 0*30.48}};
-			  ; 
+
 	  private static double SQUARE_TILE = 30.48; 
 	  
-	   
+	  //the waypoints are fixed and updated before each map trial
+	  private static double[][] 
+	    	  waypoints = new double[][] 	   
+			    	   {{2*SQUARE_TILE, 1*SQUARE_TILE},
+			  			{1*SQUARE_TILE, 1*SQUARE_TILE},
+						{1*SQUARE_TILE, 2*SQUARE_TILE},
+						{2*SQUARE_TILE, 0*SQUARE_TILE},
+						};  ; 
+						
+	
+	/**
+	 * The main method initializes all the threads and depending on user input on 
+	 * button pressed, runs the required navigation thread. 				
+	 * @param args
+	 * @throws OdometerExceptions
+	 */
 	public static void main(String[] args) throws OdometerExceptions{
 		   int buttonChoice;
 		    // Odometer related objects
 		    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD); 
 		    Display odometryDisplay = new Display(lcd); // No need to change
-
+		    
+		    //Objects of the navigation and obstacle avoider class are created here
+		    //We pass in the motors, track, wheel_rad and the waypoints for the map chosen
 			Navigation navigator = new Navigation(leftMotor, rightMotor, TRACK, WHEEL_RAD, waypoints);   
 		  	ObstacleAvoider obstacleAvoider = new ObstacleAvoider(leftMotor, rightMotor, TRACK, WHEEL_RAD, waypoints);
 		    do {
@@ -63,14 +72,15 @@ public class Lab3 {
     
 	    while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);		      
 		
+		    //This method starts the threads for the odometer and display
 		    initThreads(odometer, odometryDisplay); 
 		    
 		    if(buttonChoice == Button.ID_LEFT) {	
-		    	lcd.clear();
+		    	//runs the navigation class
 		    	navigator.run();
 		    }
 		    else if(buttonChoice == Button.ID_RIGHT) {
-		    	lcd.clear();
+		    	//runs the obstacle avoider class
 				obstacleAvoider.run();
 		    }
 
@@ -78,6 +88,11 @@ public class Lab3 {
 		    System.exit(0);
 		  }
 
+	/**
+	 * Simple method that initializes the threads for the odometer and odometer display
+	 * @param odometer
+	 * @param odometryDisplay
+	 */
 	private static void initThreads(Odometer odometer, Display odometryDisplay) {
 	    Thread odoThread = new Thread(odometer);
 	      odoThread.start();
@@ -86,60 +101,4 @@ public class Lab3 {
 	   
 	}
 	
-	private static void selectMap(double[][] waypoints, double SQUARE_TILE) {
-		 // ask the user whether the motors should drive in a square or float
-			int buttonChoice; 
-			do {
-	      lcd.drawString(" ^ Map 1 ^ ", 0, 0);
-	      lcd.drawString("          |        ", 0, 1);
-	      lcd.drawString(" < Map 2 | Map 3 >  ", 0, 2);
-	      lcd.drawString("      ", 0, 3);
-	      lcd.drawString(" Map 4 v ", 0, 4);
-	      		    	
-	      
-	      buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-	      
-	
-	    } while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT &&
-	    		buttonChoice != Button.ID_UP && buttonChoice != Button.ID_DOWN);
-			
-			
-	      if(buttonChoice == Button.ID_UP) {
-	    	  //Run map 1 code 
-	    	  waypoints = new double[][] 	   
-	    	   {{0*SQUARE_TILE, 2*SQUARE_TILE},
-	  			{1*SQUARE_TILE, 1*SQUARE_TILE},
-				{2*SQUARE_TILE, 2*SQUARE_TILE},
-				{2*SQUARE_TILE, 1*SQUARE_TILE},
-				{1*SQUARE_TILE, 0*SQUARE_TILE}};
-	      }
-	      else if(buttonChoice == Button.ID_LEFT) {
-	    	  //Run map 2 code 
-	    	  waypoints = new double[][] 	   
-			    	   {{1*SQUARE_TILE, 1*SQUARE_TILE},
-			  			{0*SQUARE_TILE, 2*SQUARE_TILE},
-						{2*SQUARE_TILE, 2*SQUARE_TILE},
-						{2*SQUARE_TILE, 1*SQUARE_TILE},
-						{1*SQUARE_TILE, 0*SQUARE_TILE}};
-	      }
-	      else if(buttonChoice == Button.ID_RIGHT) {
-	    	  //Run map 3 code
-	    	  waypoints = new double[][] 	   
-			    	   {{1*SQUARE_TILE, 0*SQUARE_TILE},
-			  			{2*SQUARE_TILE, 1*SQUARE_TILE},
-						{2*SQUARE_TILE, 2*SQUARE_TILE},
-						{0*SQUARE_TILE, 2*SQUARE_TILE},
-						{1*SQUARE_TILE, 1*SQUARE_TILE}};
-	      }		    	  
-	      
-	      else if(buttonChoice == Button.ID_DOWN) {
-	    	//Run map 4 code
-	    	  waypoints = new double[][] 	   
-			    	   {{0*SQUARE_TILE, 1*SQUARE_TILE},
-			  			{1*SQUARE_TILE, 2*SQUARE_TILE},
-						{1*SQUARE_TILE, 0*SQUARE_TILE},
-						{2*SQUARE_TILE, 1*SQUARE_TILE},
-						{2*SQUARE_TILE, 2*SQUARE_TILE}};
-	      }	 
-	}
 	}

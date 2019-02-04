@@ -64,10 +64,8 @@ private double[][]
 	double dist; 
 	double dTheta; 
 	
-	public void run() {
+	public void run() {	
 		//Threaded method, main code goes here. 
-		
-	//	selectMap(waypoints, SQUARE_TILE); //allows the user to select a map to navigate
 		
 		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] {leftMotor, rightMotor}) {
 			motor.stop();
@@ -80,14 +78,19 @@ private double[][]
 			
 		}
 		
+		//This is the main for loop that makes the robot travel to the waypoints, 
+		//row by row
 		for (int i = 0; i < waypoints.length; i++) { 
 			travelTo(waypoints[i][0], waypoints[i][1]);
 		}
 	}
 	/**
 	 * This method allows the robot to travel to each waypoints based on its x and y coordinates
-	 * @param x
-	 * @param y
+	 * It uses the current position of the robot from the odometer, and calculates how far it needs to move based on that
+	 * 
+	 * Based on in which quadrant it needs to move, the angle is calculated differently to ensure minimal angle
+	 * @param x - the x co-ordinate of the waypoint to travel to
+	 * @param y - the y co-ordinate of thew waypoint to travel to
 	 */
 	void travelTo(double x, double y) {
 		//TODO: This method should cause robot to go to (x,y) coordinates entered. 
@@ -178,7 +181,10 @@ private double[][]
 	}
 		
 
-	
+	/**
+	 * This method returns true if both the left motor and right motor is moving
+	 * @return a boolean indicating whether robot is moving
+	 */
 	boolean isNavigating() {
 		//boolean indicates whether travelTo and turnTo are running
 		boolean result = false; 
