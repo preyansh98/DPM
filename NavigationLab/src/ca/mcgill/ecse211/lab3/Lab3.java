@@ -28,7 +28,15 @@ public class Lab3 {
 	  public static final double WHEEL_RAD = 2.19; //2.19 set as the radius of the wheel
 	  public static final double TRACK = 10.7; //The track value refers to distance between the two wheels.
 
-	  private static double[][] waypoints; 
+
+  	
+	  private static double[][] waypoints = new double[][]
+		    {{1*30.48, 1*30.48},
+			{0*30.48, 2*30.48},
+			{2*30.48, 2*30.48},
+			{2*30.48,1*30.48},
+			{1*30.48, 0*30.48}};
+			  ; 
 	  private static double SQUARE_TILE = 30.48; 
 	  
 	   
@@ -37,9 +45,8 @@ public class Lab3 {
 		    // Odometer related objects
 		    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD); 
 		    Display odometryDisplay = new Display(lcd); // No need to change
-			Navigation navigator = new Navigation(leftMotor, rightMotor, TRACK, WHEEL_RAD); 
-		    ObstacleAvoider obstacleAvoider = new ObstacleAvoider(leftMotor, rightMotor, TRACK, WHEEL_RAD); 
-		    
+		  	ObstacleAvoider obstacleAvoider = new ObstacleAvoider(leftMotor, rightMotor, TRACK, WHEEL_RAD, waypoints);
+			Navigation navigator = new Navigation(leftMotor, rightMotor, TRACK, WHEEL_RAD, waypoints); 
 		    do {
 		      // clear the displays
 		      lcd.clear();
@@ -57,11 +64,11 @@ public class Lab3 {
 		    
 		    initThreads(odometer, odometryDisplay); 
 		    
-		    if(buttonChoice == Button.ID_LEFT) {		  
+		    if(buttonChoice == Button.ID_LEFT) {	
 		    	navigator.run();
 		    }
 		    else if(buttonChoice == Button.ID_RIGHT) {
-		    	obstacleAvoider.run();
+				obstacleAvoider.run();
 		    }
 
 		    while (Button.waitForAnyPress() != Button.ID_ESCAPE);

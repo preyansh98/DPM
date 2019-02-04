@@ -25,19 +25,14 @@ public class Navigation extends Thread {
 	private OdometerData odoData; 
 	
 private double[][]
-  	  waypoints = new double[][] 	   
-	    	   {{1*SQUARE_TILE, 1*SQUARE_TILE},
-	  			{0*SQUARE_TILE, 2*SQUARE_TILE},
-				{2*SQUARE_TILE, 2*SQUARE_TILE},
-				{2*SQUARE_TILE, 1*SQUARE_TILE},
-				{1*SQUARE_TILE, 0*SQUARE_TILE}};
+  	  waypoints;
 
     private static final TextLCD lcd = LocalEV3.get().getTextLCD(); 
 
 	int ROTATE_SPEED = 150; 
 
 	public Navigation(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, final double TRACK,
-			final double WHEEL_RAD) throws OdometerExceptions{
+			final double WHEEL_RAD, double[][] waypoints) throws OdometerExceptions{
 		
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor; 
@@ -46,7 +41,7 @@ private double[][]
 		this.odometer = Odometer.getOdometer();
 	    odoData = OdometerData.getOdometerData();
 	    odoData.setXYT(0 , 0 , 0);
-	    
+	    this.waypoints = waypoints;
 	   
 	}
 	
@@ -81,7 +76,6 @@ private double[][]
 			travelTo(waypoints[i][0], waypoints[i][1]);
 		}
 	}
-
 	
 	void travelTo(double x, double y) {
 		//TODO: This method should cause robot to go to (x,y) coordinates entered. 
@@ -132,6 +126,8 @@ private double[][]
 		leftMotor.rotate(convertDistance(WHEEL_RAD, dist), true);
 	    rightMotor.rotate(convertDistance(WHEEL_RAD, dist), false); 
 		//convertDistance borrowed from SquareDriver
+	    
+	    
 	
 	}
 	
@@ -140,7 +136,6 @@ private double[][]
 		
 		
 		if(theta>180) {
-			//angel correction in order to turn at minimal angle
 			theta=360-theta;
 			leftMotor.setSpeed(ROTATE_SPEED);
 			leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), true);
@@ -191,8 +186,11 @@ private double[][]
 	  private static int convertDistance(double radius, double distance) {
 	    return (int) ((180.0 * distance) / (Math.PI * radius));
 	  }
+	  
+	  
 
 	  private static int convertAngle(double radius, double width, double angle) {
 	    return convertDistance(radius, Math.PI * width * angle / 360.0);
 	  }
+	  
 	}
