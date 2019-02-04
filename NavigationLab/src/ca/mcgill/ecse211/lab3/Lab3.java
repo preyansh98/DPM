@@ -4,6 +4,7 @@ package ca.mcgill.ecse211.lab3;
 
 import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -29,7 +30,6 @@ public class Lab3 {
 	  public static final double TRACK = 10.7; //The track value refers to distance between the two wheels.
 
 
-  	
 	  private static double[][] waypoints = new double[][]
 		    {{1*30.48, 1*30.48},
 			{0*30.48, 2*30.48},
@@ -45,8 +45,9 @@ public class Lab3 {
 		    // Odometer related objects
 		    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD); 
 		    Display odometryDisplay = new Display(lcd); // No need to change
+
+			Navigation navigator = new Navigation(leftMotor, rightMotor, TRACK, WHEEL_RAD, waypoints);   
 		  	ObstacleAvoider obstacleAvoider = new ObstacleAvoider(leftMotor, rightMotor, TRACK, WHEEL_RAD, waypoints);
-			Navigation navigator = new Navigation(leftMotor, rightMotor, TRACK, WHEEL_RAD, waypoints); 
 		    do {
 		      // clear the displays
 		      lcd.clear();
@@ -61,13 +62,15 @@ public class Lab3 {
 	      }
     
 	    while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);		      
-		    
+		
 		    initThreads(odometer, odometryDisplay); 
 		    
 		    if(buttonChoice == Button.ID_LEFT) {	
+		    	lcd.clear();
 		    	navigator.run();
 		    }
 		    else if(buttonChoice == Button.ID_RIGHT) {
+		    	lcd.clear();
 				obstacleAvoider.run();
 		    }
 
@@ -83,7 +86,7 @@ public class Lab3 {
 	   
 	}
 	
-	private static  void selectMap(double[][] waypoints, double SQUARE_TILE) {
+	private static void selectMap(double[][] waypoints, double SQUARE_TILE) {
 		 // ask the user whether the motors should drive in a square or float
 			int buttonChoice; 
 			do {
@@ -95,11 +98,12 @@ public class Lab3 {
 	      		    	
 	      
 	      buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-
+	      
 	
 	    } while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT &&
-	    		buttonChoice != Button.ID_UP && buttonChoice != Button.ID_DOWN	);
-
+	    		buttonChoice != Button.ID_UP && buttonChoice != Button.ID_DOWN);
+			
+			
 	      if(buttonChoice == Button.ID_UP) {
 	    	  //Run map 1 code 
 	    	  waypoints = new double[][] 	   
@@ -137,16 +141,5 @@ public class Lab3 {
 						{2*SQUARE_TILE, 1*SQUARE_TILE},
 						{2*SQUARE_TILE, 2*SQUARE_TILE}};
 	      }	 
-
 	}
-
 	}
-
-
-
-
-
-
-
-
- 
