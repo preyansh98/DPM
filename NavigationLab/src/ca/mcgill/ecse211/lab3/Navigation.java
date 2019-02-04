@@ -25,12 +25,20 @@ public class Navigation extends Thread {
 	private OdometerData odoData; 
 	
 private double[][]
-  	  waypoints;
+  	  waypoints; //initializes a double array of waypoints 
 
-    private static final TextLCD lcd = LocalEV3.get().getTextLCD(); 
+    private static final TextLCD lcd = LocalEV3.get().getTextLCD(); //
 
 	int ROTATE_SPEED = 150; 
-
+/**
+ * this constructor sets up the leftMotor, rightMotor, track between the wheels, the radius of the wheels and the odometer
+ * @param leftMotor
+ * @param rightMotor
+ * @param TRACK
+ * @param WHEEL_RAD
+ * @param waypoints
+ * @throws OdometerExceptions
+ */
 	public Navigation(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, final double TRACK,
 			final double WHEEL_RAD, double[][] waypoints) throws OdometerExceptions{
 		
@@ -45,7 +53,7 @@ private double[][]
 	   
 	}
 	
-	//Variables
+	//initialization of Variables
 	double deltaX; 
 	double deltaY; 
 	double deltaT;
@@ -76,19 +84,23 @@ private double[][]
 			travelTo(waypoints[i][0], waypoints[i][1]);
 		}
 	}
-	
+	/**
+	 * This method allows the robot to travel to each waypoints based on its x and y coordinates
+	 * @param x
+	 * @param y
+	 */
 	void travelTo(double x, double y) {
 		//TODO: This method should cause robot to go to (x,y) coordinates entered. 
 		
-		double position[] = new double[3]; 
-		position = odometer.getXYT(); 
-		currentX = position[0];
-		currentY = position[1];
-		currentT = position[2];
+		double position[] = new double[3]; //create a array of size 3 for the odometer
+		position = odometer.getXYT(); // fill the array with the XYT components from odometer
+		currentX = position[0];// get x value at first position of array
+		currentY = position[1];// get y value at second position of array
+		currentT = position[2]; // get theta value at third position of array
 		
-		deltaX = x - currentX; 
+		deltaX = x - currentX; //store difference between waypoint coordinates and odometer coordinates in a variable
 		deltaY = y - currentY; 
-		dist = Math.sqrt(deltaX * deltaX + deltaY*deltaY); 
+		dist = Math.sqrt(deltaX * deltaX + deltaY*deltaY); //store shortest distance from waypoint in variable
 		
 		//Three cases based on deltaX, deltaY
 		
@@ -130,7 +142,10 @@ private double[][]
 	    
 	
 	}
-	
+	/**
+	 * This method allows the robot to turn by the required angle so it is aligned with the new waypoint it needs to reach
+	 * @param theta
+	 */
 	void turnTo(double theta) {
 		//TODO: This method should cause the robot to turn to theta
 		
