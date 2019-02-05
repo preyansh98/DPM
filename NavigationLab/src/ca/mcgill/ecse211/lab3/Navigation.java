@@ -154,7 +154,7 @@ private double[][]
 		
 		
 		if(theta>180) {
-			theta=360-theta;
+			theta=360-theta;//ensures the robot turns by the minimal angle
 			leftMotor.setSpeed(ROTATE_SPEED);
 			leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), true);
 		    rightMotor.setSpeed(ROTATE_SPEED);
@@ -164,7 +164,7 @@ private double[][]
 		
 		else if(theta<-180) {
 			
-			theta=360+theta;
+			theta=360+theta;//ensures the robot turns by the minimal angle
 			leftMotor.setSpeed(ROTATE_SPEED);
 			leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), true);
 			rightMotor.setSpeed(ROTATE_SPEED);
@@ -197,7 +197,7 @@ private double[][]
 	
 		
 	  /**
-	   * This method allows the conversion of a distance to the total rotation of each wheel need to
+	   * This method allows the conversion of a distance to the total rotation of each wheel needed to
 	   * cover that distance.
 	   * 
 	   * @param radius
@@ -209,7 +209,13 @@ private double[][]
 	  }
 	  
 	  
-
+	  /**
+	   * 
+	   * @param radius
+	   * @param width
+	   * @param angle
+	   * @return
+	   */
 	  private static int convertAngle(double radius, double width, double angle) {
 	    return convertDistance(radius, Math.PI * width * angle / 360.0);
 	  }

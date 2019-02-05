@@ -163,12 +163,13 @@ public class ObstacleAvoider extends Thread {
 					//run this code
 					
 					if(odometer.getXYT()[0]<2.4*30.48 && odometer.getXYT()[0] >1.3*30.48
-							&& odometer.getXYT()[1]<2.5*30.48 && odometer.getXYT()[1]>1.6*30.48 ){
+							&& odometer.getXYT()[1]<2.5*30.48 && odometer.getXYT()[1]>1.6*30.48 ){ 
+						// if robot is at the top right of the map, run this code
 						
 						//it moves a fixed pattern to avoid the block
-						leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, 90), true);   
+						leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, 90), true);   // makes sharp 90 degree turn first to avoid obstacle
 						rightMotor.rotate(convertAngle(WHEEL_RAD, TRACK, 90), false);
-						leftMotor.rotate(convertDistance(WHEEL_RAD, 30), true);
+						leftMotor.rotate(convertDistance(WHEEL_RAD, 30), true); 
 						rightMotor.rotate(convertDistance(WHEEL_RAD, 30), false);
 						leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, 90), true);
 						rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, 90), false);
@@ -176,7 +177,8 @@ public class ObstacleAvoider extends Thread {
 						rightMotor.rotate(convertDistance(WHEEL_RAD, 40), false);
 					}
 					
-					else {
+					else {//if robot is not at top right of the map run this code
+						//still moves a fixed pattern to avoid the block
 					leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, 90), true);   
 					rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, 90), false);
 					leftMotor.rotate(convertDistance(WHEEL_RAD, 30), true);
