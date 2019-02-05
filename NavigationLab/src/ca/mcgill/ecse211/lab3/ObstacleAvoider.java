@@ -36,10 +36,10 @@ public class ObstacleAvoider extends Thread {
 	private static final int ROTATE_SPEED = 150;
 	
 	//Other global variables
-	double currentX, currentY, currentT;
-	double deltaX, deltaY, dTheta;
-	double dist;
-	int counter = 0;
+	private double currentX, currentY, currentT;
+	private double deltaX, deltaY, dTheta;
+	private double dist;
+	private int counter = 0;
 	
 	//Odometer initializers
 	private Odometer odometer;
@@ -162,8 +162,8 @@ public class ObstacleAvoider extends Thread {
 					//if the distance is below a certain threshold, i.e. obstacle is here
 					//run this code
 					
-					if(odometer.getXYT()[0]<2.4*30.48 && odometer.getXYT()[0] >1.3*30.48
-							&& odometer.getXYT()[1]<2.5*30.48 && odometer.getXYT()[1]>1.6*30.48 ){ 
+					if(odometer.getXYT()[0] > 1.1*30.48 && odometer.getXYT()[0]<2.2*30.48
+							&& odometer.getXYT()[1]<2.2*30.48 && odometer.getXYT()[1]>1.7*30.48 ){ 
 						// if robot is at the top right of the map, run this code
 						
 						//it moves a fixed pattern to avoid the block
