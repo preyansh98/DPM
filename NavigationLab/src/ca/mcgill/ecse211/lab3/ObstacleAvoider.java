@@ -165,8 +165,10 @@ public class ObstacleAvoider extends Thread {
 					if(odometer.getXYT()[0] > 1.1*30.48 && odometer.getXYT()[0]<2.2*30.48
 							&& odometer.getXYT()[1]<2.2*30.48 && odometer.getXYT()[1]>1.7*30.48 ){ 
 						// if robot is at the top right of the map, run this code
+					
 						
-						//it moves a fixed pattern to avoid the block
+						//it moves a fixed pattern to avoid the block but turns to the left
+						//so it doesn't fall off the grid
 						leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, 90), true);   // makes sharp 90 degree turn first to avoid obstacle
 						rightMotor.rotate(convertAngle(WHEEL_RAD, TRACK, 90), false);
 						leftMotor.rotate(convertDistance(WHEEL_RAD, 30), true); 
@@ -179,6 +181,7 @@ public class ObstacleAvoider extends Thread {
 					
 					else {//if robot is not at top right of the map run this code
 						//still moves a fixed pattern to avoid the block
+						//the rotate is swapped so it moves to the left instead.
 					leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, 90), true);   
 					rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, 90), false);
 					leftMotor.rotate(convertDistance(WHEEL_RAD, 30), true);
@@ -201,22 +204,26 @@ public class ObstacleAvoider extends Thread {
 		 * This method makes the robot turn to a specific angle entered. 
 		 * @param theta
 		 */
-		void turnTo(double theta) {
-			//TODO: This method should cause the robot to turn to theta
-			
+		void turnTo(double theta) {		
 			
 			if(theta>180) {
-			
+				
+				/*
+				* If the angle is more than 180, then we need the minimal angle instead, i.e. 360 - angle. 
+				*/
 				theta=360-theta;
 				leftMotor.setSpeed(ROTATE_SPEED);
 				leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), true);
-			    rightMotor.setSpeed(ROTATE_SPEED);
+			        rightMotor.setSpeed(ROTATE_SPEED);
 				rightMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), false);
 
 				}
 			
 			else if(theta<-180) {
 				
+				/*
+				* If the angle is less than -180, similarly the difference with 360 is needed. 
+				*/
 				theta=360+theta;
 				leftMotor.setSpeed(ROTATE_SPEED);
 				leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), true);
@@ -227,6 +234,9 @@ public class ObstacleAvoider extends Thread {
 			
 			else {	
 				
+				/*
+				* Angle is within the range so it is already minimal angle. 
+				*/
 				leftMotor.setSpeed(ROTATE_SPEED);
 				leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), true);
 				rightMotor.setSpeed(ROTATE_SPEED);
