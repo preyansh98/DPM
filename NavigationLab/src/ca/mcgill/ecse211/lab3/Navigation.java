@@ -145,40 +145,51 @@ private double[][]
 	    
 	
 	}
-	/**
-	 * This method allows the robot to turn by the required angle so it is aligned with the new waypoint it needs to reach
-	 * @param theta
-	 */
-	void turnTo(double theta) {
-		//TODO: This method should cause the robot to turn to theta
-		
-		
-		if(theta>180) {
-			theta=360-theta;//ensures the robot turns by the minimal angle
-			leftMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), true);
-		    rightMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), false);
 
-			}
-		
-		else if(theta<-180) {
+		/**
+		 * This method makes the robot turn to a specific angle entered. 
+		 * @param theta
+		 */
+		void turnTo(double theta) {		
 			
-			theta=360+theta;//ensures the robot turns by the minimal angle
-			leftMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), true);
-			rightMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), false);
-			}
-		
-		else {	
+			if(theta>180) {
+				
+				/*
+				* If the angle is more than 180, then we need the minimal angle instead, i.e. 360 - angle. 
+				*/
+				theta=360-theta;
+				leftMotor.setSpeed(ROTATE_SPEED);
+				leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), true);
+			        rightMotor.setSpeed(ROTATE_SPEED);
+				rightMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), false);
+
+				}
 			
-			leftMotor.setSpeed(ROTATE_SPEED);
-			leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), true);
-			rightMotor.setSpeed(ROTATE_SPEED);
-			rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), false);
+			else if(theta<-180) {
+				
+				/*
+				* If the angle is less than -180, similarly the difference with 360 is needed. 
+				*/
+				theta=360+theta;
+				leftMotor.setSpeed(ROTATE_SPEED);
+				leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), true);
+				rightMotor.setSpeed(ROTATE_SPEED);
+				rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), false);
+			
+			}
+			
+			else {	
+				
+				/*
+				* Angle is within the range so it is already minimal angle. 
+				*/
+				leftMotor.setSpeed(ROTATE_SPEED);
+				leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, theta), true);
+				rightMotor.setSpeed(ROTATE_SPEED);
+				rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, theta), false);
+			
+			}
 		}
-	}
 		
 
 	/**
