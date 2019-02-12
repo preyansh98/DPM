@@ -1,14 +1,10 @@
 package ca.mcgill.ecse211.lab4;
 
 import ca.mcgill.ecse211.odometer.*;
-import ca.mcgill.ecse211.ultrasonic.UltrasonicPoller;
 import lejos.hardware.Button;
-import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.port.SensorPort;
-import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
@@ -44,12 +40,8 @@ public class Lab4 {
 	public static void main(String[] args) throws OdometerExceptions{
 		//Setting up the sensor
 		@SuppressWarnings("resource")	
-		SensorModes usSensor = new EV3UltrasonicSensor(sensorPortUS);
-		//SensorModes usSensor = new EV3UltrasonicSensor(SensorPort.S1);		
+		SensorModes usSensor = new EV3UltrasonicSensor(sensorPortUS);	
 		SampleProvider usDistance = usSensor.getMode("Distance");	
-		float [] usData = new float[usDistance.sampleSize()];
-			
-
 
 		
 		   int buttonChoice;
@@ -94,6 +86,7 @@ public class Lab4 {
 		    }
 			
 		    initThreads(odometer, odometryDisplay);
+		    //calls on the main method of usLocalizer, that begins the fallingEdge or risingEdge localization. 
 		    usLocalizer.mainMethod(); 
 
 
@@ -107,7 +100,6 @@ public class Lab4 {
 				System.exit(0);
 			}
 			
-			//add lightsensor calling here
 			
 			while (Button.waitForAnyPress() != Button.ID_ESCAPE);
 		    System.exit(0);
