@@ -12,21 +12,33 @@ import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.odometer.Odometer;
 import lejos.hardware.Sound;
 
+/**
+ * This class initializes and runs the light localizer allowing the robot to turn to the origin correctly. 
+ * @author Preyansh
+ * @author Maxime
+ *
+ */
 public class LightLocalizer {
 	
+	//The Sensor Offset is the recorded distance between the centre of rotation (between the wheels) and the light sensor. 
 	private final double SENSOR_OFFSET = 13; 
 
+	//Speeds for the motors
 	private static int ROTATE_SPEED = 50;
 	private static int MOTOR_SPEED = 100; 
+	
+	//Light Sensor specific variables
 	private static final double lineThreshold = 185; 
 	private int lineCounter = 0; 
+	double[] ThetaArray = new double[4];
+	
 	//Odometer
 	private Odometer odometer; 
 	
 	//Motors
 	private EV3LargeRegulatedMotor leftMotor, rightMotor; 
 	
-	//Setting up light sensor
+	//Initializing light sensor
 	private static final Port lsPort = LocalEV3.get().getPort("S4"); 
 	EV3ColorSensor colSensor = new EV3ColorSensor(lsPort);
 	SampleProvider lsValue; 
@@ -35,8 +47,16 @@ public class LightLocalizer {
 	//other global variables
 	private double TRACK = 0; 
 	private double WHEEL_RAD = 0;  
-	double[] ThetaArray = new double[4];
 	
+	/**
+	 * The constructor takes in references to the motors, odometer, and TRACK/WHEEL_RAD values from main class
+	 * The color sensor is also initialized here to red mode, and an array is initialized to store samples. 
+	 * @param leftMotor
+	 * @param rightMotor
+	 * @param odometer
+	 * @param TRACK
+	 * @param WHEEL_RAD
+	 */
 	public LightLocalizer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, 
 			Odometer odometer, double TRACK, double WHEEL_RAD) {
 		this.odometer = odometer; 
@@ -50,18 +70,24 @@ public class LightLocalizer {
 		this.lsData = new float[lsValue.sampleSize()];
 	}
 	
+	/**
+	 * This is the main method that is called upon in the main. 
+	 * This method makes the robot turn to the origin, apply a correction algorithm, and stop at origin in correct angle finally. 
+	 */
 	public void mainMethod() {
-		//1st we want it to turn to the origin. 
+		
+		//First, we want it to turn to 45 degrees, i.e. where the origin is
 		turnTo(45); 
 		
 
-		//Move till the sensor detects origin line 
+		//Move till the sensor detects black line close to origin. 
 		while(getIntensity() > lineThreshold) {
 			leftMotor.setSpeed(MOTOR_SPEED);
 			rightMotor.setSpeed(MOTOR_SPEED);
 			leftMotor.forward();
 			rightMotor.forward();
 			LCD.drawString("value: " + getIntensity(), 0, 5);
+			//Moves forward until a black line is found, when a line is found, it breaks out of this loop. 
 			if(getIntensity() < lineThreshold) {
 				break;
 			}
@@ -70,7 +96,7 @@ public class LightLocalizer {
 		  rightMotor.stop();
 		  Sound.beep();
 		  
-		//move back by the offset
+		//move back by the Sensor Offset value
 		leftMotor.setSpeed(MOTOR_SPEED);
 		rightMotor.setSpeed(MOTOR_SPEED);
 		leftMotor.rotate(convertDistance(WHEEL_RAD, -SENSOR_OFFSET), true);
@@ -79,8 +105,10 @@ public class LightLocalizer {
 		//Now advance forward until you read a line
 		
 		while(lineCounter < 4) {
+			//While it hasn't detected all four lines, it will continuosly turn clockwise 
 			turnClockwise(); 
 
+			//In this loop when it detects a line, it will store the theta values in an array 
 			if(getIntensity() < lineThreshold) {
 				ThetaArray[lineCounter] = odometer.getXYT()[2];
 				Sound.setVolume(10);
@@ -89,19 +117,20 @@ public class LightLocalizer {
 			}			
 		}
 
-		/**********************************************************/
-		  double dX, dY, anglex, angley, deltathetaY;
+		/*We now have the theta values stored, makes calculations to move to origin now*/
+		  double dX, dY, anglex, angley;
 
 		  // Get our location from origin using the calculated angles
 		  angley = ThetaArray[3] - ThetaArray[1];
 		  anglex = ThetaArray[2] - ThetaArray[0];
 
+		  //Based on the angles calculated, calculates the current x and y position
 		  dX = -SENSOR_OFFSET*Math.cos(Math.toRadians(angley/2)); 
 		  dY = -SENSOR_OFFSET*Math.cos(Math.toRadians(anglex/2));
-		  
-		  deltathetaY = (Math.PI / 2.0) - ThetaArray[3] + Math.PI + (angley / 2.0);
-		  
+		  		  
+		  //Sets current position in odometer to the x and y calculated
 		  odometer.setXYT(dX, dY, odometer.getXYT()[2]);
+		  //Moves to the origin relative to this
 		  this.travelTo(0.0, 0.0);
 		  do {
     	  LCD.drawString("X: " +dX, 0, 5);
@@ -111,19 +140,31 @@ public class LightLocalizer {
 	      
 		  //Now make it turn to 0. 
 		  Sound.setVolume(20);
-		  Sound.systemSound(false, 2);   //er
+		  Sound.systemSound(false, 2);   
 		  
+		  //Based on the current angle reported from the odometer, will move to correct the angle, i.e. turn to 0. 
 		  double currentangle = odometer.getXYT()[2]; 
 		  turnTo(-currentangle);
 
 		  
 	}
 	
+	/**
+	 * This method makes the robot turn clockwise.
+	 */
 	private void turnClockwise() {
 		leftMotor.forward();
 		rightMotor.backward();		
 	}
 	
+	/**
+	 * This method is borrowed from the Navigation class. 
+	 * It uses the current position of the robot from the odometer, and calculates how far it needs to move based on that
+	 * 
+	 * Based on in which quadrant it needs to move, the angle is calculated differently to ensure minimal angle
+	 * @param x - the x co-ordinate of the waypoint to travel to
+	 * @param y - the y co-ordinate of the waypoint to travel to
+	 */
 	void travelTo(double x, double y) {
 
 		double currentX, currentY, currentT, deltaX, deltaY, dist; 
@@ -179,6 +220,11 @@ public class LightLocalizer {
 	
 	}
 
+	/**
+	 * This method is also borrowed from Navigation class. 
+	 * It makes the robot turn to a specific angle entered. 
+	 * @param theta
+	 */
 	private void turnTo(double theta) {		
 		
 		if(theta>180) {
@@ -219,7 +265,11 @@ public class LightLocalizer {
 		
 		}
 	}
-	boolean isNavigating() {
+	/**
+	 * This boolean method check whether motors are moving (i.e. robot is navigating)
+	 * @return a boolean that returns true if the motors are moving
+	 */
+	private boolean isNavigating() {
 		//boolean indicates whether travelTo and turnTo are running
 		boolean result = false; 
 		if(leftMotor.isMoving() && rightMotor.isMoving()) {
@@ -230,17 +280,20 @@ public class LightLocalizer {
 	}
 	
 
-	
+	/**
+	 * This is a getter for the Intensity value from the light sensor. 
+	 * The sample is fetched, stored, and returned to the class
+	 * @return a double value of the light sensor reading. 
+	 */
 	private double getIntensity() {
 		colSensor.fetchSample(lsData, 0);
 		double lsValue = lsData[0] * 1000; 
-		
 		return lsValue;
 		
 	}
 	
 	  /**
-	   * This method allows the conversion of a distance to the total rotation of each wheel need to
+	   * These methods allows the conversion of a distance to the total rotation of each wheel need to
 	   * cover that distance.
 	   * Borrowed from SquareDriver class
 	   * 
