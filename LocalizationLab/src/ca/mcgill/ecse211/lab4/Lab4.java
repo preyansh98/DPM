@@ -61,7 +61,7 @@ public class Lab4 {
 		    //We pass in the motors, track, wheel_rad and the waypoints for the map chosen
 			
 		  
-	    	LightLocalizer lsLocalizer = new LightLocalizer(leftMotor, rightMotor, odometer); 
+	    	LightLocalizer lsLocalizer = new LightLocalizer(leftMotor, rightMotor, odometer, TRACK, WHEEL_RAD); 
 			
 			
 			do {
@@ -101,7 +101,7 @@ public class Lab4 {
 				;
 
 			// implement the light sensor localization
-			lsLocalizer.lightLocalize();
+			lsLocalizer.mainMethod();
 			
 			if(Button.waitForAnyPress() == Button.ID_ESCAPE) {
 				System.exit(0);
