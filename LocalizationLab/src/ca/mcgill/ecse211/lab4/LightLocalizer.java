@@ -290,23 +290,29 @@ public class LightLocalizer {
 		
 	}
 	
-	  /**
-	   * These methods allows the conversion of a distance to the total rotation of each wheel need to
-	   * cover that distance.
-	   * Borrowed from SquareDriver class
-	   * 
-	   * @param radius
-	   * @param distance
-	   * @return an integer tacho count
-	   */
-	  private static int convertDistance(double radius, double distance) {
-	    return (int) ((180.0 * distance) / (Math.PI * radius));
-	  }
-
-	  private static int convertAngle(double radius, double width, double angle) {
-	    return convertDistance(radius, Math.PI * width * angle / 360.0);
-	  }
-
-	  
+    /**
+     * This method allows the conversion of a distance to the total rotation of each wheel need to
+     * cover that distance.
+     * Borrowed from SquareDriver class
+     *
+     * @param radius
+     * @param distance
+     * @return an integer tacho count
+     */
+    private static int convertDistance(double radius, double distance) {
+        return (int) ((180.0 * distance) / (Math.PI * radius));
+    }
+    
+    /**
+     * This method takes in the radius, width, and angle and converts the angle to a 
+     * tacho count to rotate the wheels. 
+     * @param radius
+     * @param width
+     * @param angle
+     * @return an integer tacho count of how much the motors should rotate to get this angle
+     */
+    private static int convertAngle(double radius, double width, double angle) {
+        return convertDistance(radius, Math.PI * width * angle / 360.0);
+    }
 
 }
